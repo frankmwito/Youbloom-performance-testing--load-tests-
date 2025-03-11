@@ -1,0 +1,5 @@
+Method,Name,Error,Occurrences
+GET,/,HTTPError('524 Server Error: <none> for url: /'),201
+GET,/,HTTPError('524 Server Error:  for url: /'),1837
+GET,/,HTTPError('502 Server Error: Bad Gateway for url: /'),13
+GET,/,"ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None)",4
