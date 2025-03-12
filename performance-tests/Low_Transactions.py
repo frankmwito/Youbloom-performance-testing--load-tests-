@@ -20,7 +20,7 @@ Usage:
 class MyTaskSet(SequentialTaskSet):
     @task(3)
     @task('Homepage')
-    def index(self):
+    def homepage(self):
         self.client.get("/")
     
     @task(3)
