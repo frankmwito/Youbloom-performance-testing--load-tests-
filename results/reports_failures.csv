@@ -1,5 +1,14 @@
 Method,Name,Error,Occurrences
-GET,/,HTTPError('524 Server Error: <none> for url: /'),201
-GET,/,HTTPError('524 Server Error:  for url: /'),1837
-GET,/,HTTPError('502 Server Error: Bad Gateway for url: /'),13
-GET,/,"ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None)",4
+GET,/,HTTPError('524 Server Error: <none> for url: /'),6
+GET,/about/,HTTPError('524 Server Error:  for url: /about/'),19
+GET,/,HTTPError('524 Server Error:  for url: /'),57
+GET,/privacy/,HTTPError('524 Server Error: <none> for url: /privacy/'),3
+GET,/intern/,HTTPError('524 Server Error: <none> for url: /intern/'),1
+GET,/privacy/,HTTPError('524 Server Error:  for url: /privacy/'),15
+GET,/knowledge-base/,HTTPError('524 Server Error:  for url: /knowledge-base/'),1
+GET,/intern/,HTTPError('524 Server Error:  for url: /intern/'),18
+GET,/about/,HTTPError('524 Server Error: <none> for url: /about/'),5
+GET,/blog/,HTTPError('524 Server Error: <none> for url: /blog/'),3
+GET,/youbloom-at-bloom-2025/,HTTPError('524 Server Error:  for url: /youbloom-at-bloom-2025/'),18
+GET,/blog/,HTTPError('524 Server Error:  for url: /blog/'),20
+GET,/contact/,HTTPError('524 Server Error:  for url: /contact/'),2

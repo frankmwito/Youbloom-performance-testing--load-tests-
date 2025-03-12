@@ -1,66 +1,83 @@
-from locust import HttpUser, SequentialTaskSet, task, between
+from locust import HttpUser,TaskSet, task, tag, between
+import logging
 
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
 
-"""
-This is a Locust test script to test low transaction endpoints in the host: https://youbloom.com
-
-Classes:
-    UserBehavior: Defines the behavior of the simulated user.
-
-Methods:
-    on_start(self): Method that runs when a simulated user starts.
-    index(self): Simulates a user visiting the index page.
-    about(self): Simulates a user visiting the about page.
-
-Usage:
-    Run this script with Locust to simulate user behavior and test the performance of low transaction endpoints on https://youbloom.com.
-"""
-# test class for low transactions endpoints in sequential order
-
-class MyTaskSet(SequentialTaskSet):
+class MyTaskSet(TaskSet):
     @task(3)
-    @task('Homepage')
+    @tag('Homepage')
     def homepage(self):
-        self.client.get("/")
+        try:
+            response = self.client.get("/")
+            logging.info(f"Homepage response: {response.status_code}")
+        except Exception as e:
+            logging.error(f"Homepage request failed: {e}")
+    
+    @task(2)
+    @tag('About')
+    def about(self):
+        try:
+            response = self.client.get("/about/")
+            logging.info(f"About response: {response.status_code}")
+        except Exception as e:
+            logging.error(f"About request failed: {e}")
+    
+    @task(1)
+    @tag('Contact')
+    def contact(self):
+        try:
+            response = self.client.get("/contact/")
+            logging.info(f"Contact response: {response.status_code}")
+        except Exception as e:
+            logging.error(f"Contact request failed: {e}")
+    
+    @task(2)
+    @tag('Intern')
+    def intern(self):
+        try:
+            response = self.client.get("/intern/")
+            logging.info(f"Intern response: {response.status_code}")
+        except Exception as e:
+            logging.error(f"Intern request failed: {e}")
     
     @task(3)
-    @task('About')
-    def about(self):
-        self.client.get("/about/")
-    
-    @task(1)
-    @task('Contact')
-    def contact(self):
-        self.client.get("/contact/")
-        
-    @task(2)
-    @task('Intern')
-    def intern(self):
-        self.client.get("/intern/")
-    
-    @task(2)
-    @task('Blog')
+    @tag('Blog')
     def blog(self):
-        self.client.get("/blog/")
+        try:
+            response = self.client.get("/blog/")
+            logging.info(f"Blog response: {response.status_code}")
+        except Exception as e:
+            logging.error(f"Blog request failed: {e}")
     
-    @task(1)
-    @task('Privacy')
-    def privacy(self):
-        self.client.get("/privacy/")
-    
-    @task(1)
-    @task('Help_Center')
-    def privacy(self):
-        self.client.get("/knowledge-base/")
-        
     @task(2)
-    @task('Terms')
+    @tag('Privacy')
     def privacy(self):
-        self.client.get("/youbloom-at-bloom-2025/")
-
-# test class for low transactions endpoints
+        try:
+            response = self.client.get("/privacy/")
+            logging.info(f"Privacy response: {response.status_code}")
+        except Exception as e:
+            logging.error(f"Privacy request failed: {e}")
+    
+    @task(1)
+    @tag('Help_Center')
+    def help(self):
+        try:
+            response = self.client.get("/knowledge-base/")
+            logging.info(f"Help Center response: {response.status_code}")
+        except Exception as e:
+            logging.error(f"Help Center request failed: {e}")
+    
+    @task(2)
+    @tag('Terms')
+    def terms(self):
+        try:
+            response = self.client.get("/youbloom-at-bloom-2025/")
+            logging.info(f"Terms response: {response.status_code}")
+        except Exception as e:
+            logging.error(f"Terms request failed: {e}")
 
 class UserBehaviour(HttpUser):
-    wait_time = between(1, 10)
-    
+    host = "https://youbloom.com"  # Set the host URL here
+    wait_time = between(0.5, 2)
     tasks = [MyTaskSet]
