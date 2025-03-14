@@ -77,8 +77,18 @@ class MyTaskSet(TaskSet):
             logging.info(f"Terms response: {response.status_code}")
         except Exception as e:
             logging.error(f"Terms request failed: {e}")
+            
+    @task(3)
+    @tag('Signup')
+    def signup(self):
+        # Get request 
+        try:
+            response = self.client.get("/become-a-show-creator/")
+            logging.info(f"Signup response: {response.status_code}")
+        except Exception as e:
+            logging.error(f"Signup request failed: {e}")
 
 class UserBehaviour(HttpUser):
     host = "https://youbloom.com"  # Set the host URL here
     wait_time = between(0.5, 4)
-    tasks = [MyTaskSet , MyTaskSet1]
+    tasks = [MyTaskSet ]#, MyTaskSet1]
