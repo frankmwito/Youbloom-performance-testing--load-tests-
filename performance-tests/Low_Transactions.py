@@ -1,5 +1,6 @@
 from locust import HttpUser,TaskSet, task, tag, between
 import logging
+from High_Transactions import MyTaskSet1
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -79,5 +80,5 @@ class MyTaskSet(TaskSet):
 
 class UserBehaviour(HttpUser):
     host = "https://youbloom.com"  # Set the host URL here
-    wait_time = between(0.5, 2)
-    tasks = [MyTaskSet]
+    wait_time = between(0.5, 4)
+    tasks = [MyTaskSet , MyTaskSet1]
