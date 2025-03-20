@@ -1,6 +1,5 @@
 from locust import HttpUser,TaskSet, task, tag, between
 import logging
-from High_Transactions import MyTaskSet1
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)

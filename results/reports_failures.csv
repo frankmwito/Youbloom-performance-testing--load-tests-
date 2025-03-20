@@ -1,6 +1,1 @@
 Method,Name,Error,Occurrences
-POST,Signup,"ReadTimeout(ReadTimeoutError(""HTTPSConnectionPool(host='youbloom.com', port=443): Read timed out. (read timeout=60)""))",194
-POST,Signup,HTTPError('500 Server Error: Internal Server Error for url: Signup'),39
-POST,Login,HTTPError('500 Server Error: Internal Server Error for url: Login'),44
-POST,Signup,HTTPError('502 Server Error: Bad Gateway for url: Signup'),1
-POST,Login,"ReadTimeout(ReadTimeoutError(""HTTPSConnectionPool(host='youbloom.com', port=443): Read timed out. (read timeout=60)""))",180
