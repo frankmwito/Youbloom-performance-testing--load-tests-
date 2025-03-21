@@ -5,6 +5,9 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 class MyTaskSet(TaskSet):
+    def on_start(self):
+        print("Starting the tasks")
+    
     @task(3)
     @tag('Homepage')
     def homepage(self):
@@ -86,6 +89,9 @@ class MyTaskSet(TaskSet):
             logging.info(f"Signup response: {response.status_code}")
         except Exception as e:
             logging.error(f"Signup request failed: {e}")
+            
+    def on_stop(self):
+        print("Stopping the tasks")
 
 class UserBehaviour(HttpUser):
     host = "https://youbloom.com"  # Set the host URL here

@@ -10,14 +10,13 @@ from shared import shared_file # Import save_user function properly
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
-
 class MyTaskSet1(TaskSet):
     def on_start(self):
         """Set up headers for all requests."""
         self.headers = {"Content-Type": "application/json"}
         self.shared_file = shared_file()  # Create an instance of SharedFile
 
-    @task(2)
+    @task(3)
     @tag('Signup')
     def signup(self):
         """Send a POST request to the signup endpoint."""
@@ -48,61 +47,109 @@ class MyTaskSet1(TaskSet):
         except Exception as e:
             logging.error(f"Signup request failed: {e}")
 
-    @task(1)
+    @task(2)  # Increased weight to ensure this runs more frequently
     def enter_nested_task_set2(self):
         logging.info("Switching to MyTaskset2 (Login TaskSet)")
-        self.schedule_task(self.MyTaskset2)  # Call the class, not a method
+        self.schedule_task(MyTaskset2)  # Call the class, not a method
 
-    class MyTaskset2(TaskSet):
-        def on_start(self):
-            self.headers = {"Content-Type": "application/json"}
-            logging.info("Starting MyTaskset2 (Login TaskSet)")
+class MyTaskset2(TaskSet):
+    @task(3)
+    @tag('login')
+    def login(self):
+        """Send a POST request to the login endpoint."""
+        self.headers = {"Content-Type": "application/json"}
+        logging.info("Starting MyTaskset2 (Login TaskSet)")
+        try:
+            with open("users.json", "r") as file:
+                users = json.load(file)
+    
+            if not users:
+                logging.error("No users found in the file")
+                return
+    
+        except (FileNotFoundError, json.JSONDecodeError):
+            logging.error("No users found")
+            return
+    
+        # Select one random user
+        user = random.choice(users)
+        login_data = {
+            "email": user["email"],
+            "password": user["password"]
+        }
+        try:
+            response = self.client.post(
+                 "/login/",
+                data=json.dumps(login_data),
+                headers=self.headers,
+                name="Login",
+                timeout=120  # Increased timeout
+            )
+            if response.status_code == 200:
+                logging.info("Login successful")
+            else:
+                logging.error(f"Login request failed: {response.status_code}")
+                logging.error(f"Response content: {response.text}")
+        except Exception as e:
+            logging.error(f"Login request failed: {e}")
 
-        @task(2)
-        @tag('login')
-        def login(self):
-            """Send a POST request to the login endpoint."""
-            try:
-                with open("users.json", "r") as file:
-                    users = json.load(file)
 
-                if not users:
-                    logging.error("No users found in the file")
-                    return
+    @task(2)  # Task to switch to MyTaskSet3 (Forgot Password)
+    def enter_mested_forgot_password(self):
+        logging.info("Switching to MyTaskSet3 (Forgot Password TaskSet)")
+        self.schedule_task(MyTaskSet3)
+            
+    @task(1)
+    def stop_nested_1(self):
+        print("Stopping nested TaskSet2")
+        self.interrupt()  # Exit back to parent TaskSet
 
-            except (FileNotFoundError, json.JSONDecodeError):
-                logging.error("No users found")
+class MyTaskSet3(TaskSet):
+    @task(3)
+    @tag('forgot_password')
+    def forgot_password(self):
+        """Send a POST request to the forgot password endpoint."""
+        self.headers = {"Content-Type": "application/json"}
+        logging.info("Starting MyTaskSet3 (Forgot Password TaskSet)")
+        try:
+            with open("users.json", "r") as file:
+                users = json.load(file)
+
+            if not users:
+                logging.error("No users found in the file")
                 return
 
-            # Select one random user
-            user = random.choice(users)
-            login_data = {
-                "email": user["email"],
-                "password": user["password"]
-            }
-            try:
-                response = self.client.post(
-                    "/login/",
-                    data=json.dumps(login_data),
-                    headers=self.headers,
-                    name="Login",
-                    timeout=120  # Increased timeout
-                )
+        except (FileNotFoundError, json.JSONDecodeError):
+            logging.error("No users found")
+            return
+
+        # Select one random user
+        user = random.choice(users)
+        login_data = {
+            "email": user["email"]
+        }
+
+        try:
+            with self.client.post(
+                "/login/?action=forgot_password/",
+                data=json.dumps(login_data),
+                headers=self.headers,
+                name="forgot password",
+                timeout=120
+            ) as response:
                 if response.status_code == 200:
-                    logging.info("Login successful")
+                    logging.info("Forgot password successful")
                 else:
-                    logging.error(f"Login request failed: {response.status_code}")
+                    response.failure(f"Forgot password request failed: {response.status_code}")
                     logging.error(f"Response content: {response.text}")
-            except Exception as e:
-                logging.error(f"Login request failed: {e}")
+        except Exception as e:
+            logging.error(f"Forgot password request failed: {e}")
 
-        @task(1)
-        def stop_nested_1(self):
-            logging.info("Stopping MyTaskset2 (Login TaskSet)")
-            self.interrupt()  # Exit back to parent TaskSet
-
-    def on_stop(self):
-        logging.info("Stopping MyTaskSet1 (Signup TaskSet)")
+    @task(1)  # Lower weight to ensure this runs less frequently
+    def exit_nested_taskset(self):
+        """Exit the nested TaskSet."""
+        logging.info("Exiting MyTaskSet3 (Forgot Password TaskSet)")
+        self.interrupt()  # Exit back to the parent TaskSet
 
 
 class UserBehaviour(HttpUser):
