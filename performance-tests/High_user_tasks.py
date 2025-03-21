@@ -1,15 +1,14 @@
-# Contains the tests for high transactions critical user flows for the application under test (AUT) 
-# sign up, login, logout, account management, search, add to cart, checkout, etc.
-
 from locust import HttpUser, TaskSet, task, tag, constant
 import logging
 from faker import Faker
 import json
 import random
-from shared import shared_file # Import save_user function properly
+from shared import shared_file  # Import save_user function properly
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
+
+
 class MyTaskSet1(TaskSet):
     def on_start(self):
         """Set up headers for all requests."""
@@ -41,6 +40,9 @@ class MyTaskSet1(TaskSet):
             if response.status_code == 200:
                 logging.info(f"Signup response: {response.status_code}")
                 self.shared_file.save_user(data)  # Call the method on the instance
+
+                # Inspect cookies set by the server (if any)
+                logging.info(f"Cookies after signup: {self.client.cookies}")
             else:
                 logging.error(f"Signup request failed: {response.status_code}")
                 logging.error(f"Response content: {response.text}")
@@ -52,6 +54,7 @@ class MyTaskSet1(TaskSet):
         logging.info("Switching to MyTaskset2 (Login TaskSet)")
         self.schedule_task(MyTaskset2)  # Call the class, not a method
 
+
 class MyTaskset2(TaskSet):
     @task(3)
     @tag('login')
@@ -62,15 +65,15 @@ class MyTaskset2(TaskSet):
         try:
             with open("users.json", "r") as file:
                 users = json.load(file)
-    
+
             if not users:
                 logging.error("No users found in the file")
                 return
-    
+
         except (FileNotFoundError, json.JSONDecodeError):
             logging.error("No users found")
             return
-    
+
         # Select one random user
         user = random.choice(users)
         login_data = {
@@ -79,7 +82,7 @@ class MyTaskset2(TaskSet):
         }
         try:
             response = self.client.post(
-                 "/login/",
+                "/login/",
                 data=json.dumps(login_data),
                 headers=self.headers,
                 name="Login",
@@ -87,22 +90,25 @@ class MyTaskset2(TaskSet):
             )
             if response.status_code == 200:
                 logging.info("Login successful")
+
+                # Inspect cookies set by the server (if any)
+                logging.info(f"Cookies after login: {self.client.cookies}")
             else:
                 logging.error(f"Login request failed: {response.status_code}")
                 logging.error(f"Response content: {response.text}")
         except Exception as e:
             logging.error(f"Login request failed: {e}")
 
-
     @task(2)  # Task to switch to MyTaskSet3 (Forgot Password)
     def enter_mested_forgot_password(self):
         logging.info("Switching to MyTaskSet3 (Forgot Password TaskSet)")
         self.schedule_task(MyTaskSet3)
-            
+
     @task(1)
     def stop_nested_1(self):
         print("Stopping nested TaskSet2")
         self.interrupt()  # Exit back to parent TaskSet
+
 
 class MyTaskSet3(TaskSet):
     @task(3)
@@ -130,10 +136,13 @@ class MyTaskSet3(TaskSet):
         }
 
         try:
+            # Add cookies to the request (if needed)
+            cookies = {"custom_cookie": "12345"}  # Example custom cookie
             with self.client.post(
                 "/login/?action=forgot_password/",
                 data=json.dumps(login_data),
                 headers=self.headers,
+                cookies=cookies,  # Add cookies to the request
                 name="forgot password",
                 timeout=120
             ) as response:
@@ -150,6 +159,9 @@ class MyTaskSet3(TaskSet):
         """Exit the nested TaskSet."""
         logging.info("Exiting MyTaskSet3 (Forgot Password TaskSet)")
         self.interrupt()  # Exit back to the parent TaskSet
+
+    def on_stop(self):
+        print("Stopping the tasks")
 
 
 class UserBehaviour(HttpUser):

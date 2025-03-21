@@ -1,14 +1,14 @@
-from locust import HttpUser,TaskSet, task, tag, between
+from locust import HttpUser,SequentialTaskSet, task, tag, between
 import logging
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
 
-class MyTaskSet(TaskSet):
+class MyTaskSet(SequentialTaskSet):
     def on_start(self):
         print("Starting the tasks")
     
-    @task(3)
+    @task
     @tag('Homepage')
     def homepage(self):
         try:
@@ -17,7 +17,7 @@ class MyTaskSet(TaskSet):
         except Exception as e:
             logging.error(f"Homepage request failed: {e}")
     
-    @task(2)
+    @task
     @tag('About')
     def about(self):
         try:
@@ -26,7 +26,7 @@ class MyTaskSet(TaskSet):
         except Exception as e:
             logging.error(f"About request failed: {e}")
     
-    @task(1)
+    @task
     @tag('Contact')
     def contact(self):
         try:
@@ -35,7 +35,7 @@ class MyTaskSet(TaskSet):
         except Exception as e:
             logging.error(f"Contact request failed: {e}")
     
-    @task(2)
+    @task
     @tag('Intern')
     def intern(self):
         try:
@@ -44,7 +44,7 @@ class MyTaskSet(TaskSet):
         except Exception as e:
             logging.error(f"Intern request failed: {e}")
     
-    @task(3)
+    @task
     @tag('Blog')
     def blog(self):
         try:
@@ -53,7 +53,7 @@ class MyTaskSet(TaskSet):
         except Exception as e:
             logging.error(f"Blog request failed: {e}")
     
-    @task(2)
+    @task
     @tag('Privacy')
     def privacy(self):
         try:
@@ -62,7 +62,7 @@ class MyTaskSet(TaskSet):
         except Exception as e:
             logging.error(f"Privacy request failed: {e}")
     
-    @task(1)
+    @task
     @tag('Help_Center')
     def help(self):
         try:
@@ -71,7 +71,7 @@ class MyTaskSet(TaskSet):
         except Exception as e:
             logging.error(f"Help Center request failed: {e}")
     
-    @task(2)
+    @task
     @tag('Terms')
     def terms(self):
         try:
@@ -80,7 +80,7 @@ class MyTaskSet(TaskSet):
         except Exception as e:
             logging.error(f"Terms request failed: {e}")
             
-    @task(3)
+    @task
     @tag('Signup')
     def signup(self):
         # Get request 
