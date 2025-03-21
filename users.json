@@ -3482,5 +3482,29 @@
     {
         "email": "laurenpeterson@example.com",
         "password": "Test@1111"
+    },
+    {
+        "email": "mjohnson@example.org",
+        "password": "Test@1111"
+    },
+    {
+        "email": "lynnross@example.net",
+        "password": "Test@1111"
+    },
+    {
+        "email": "kaylasmith@example.org",
+        "password": "Test@1111"
+    },
+    {
+        "email": "hochoa@example.com",
+        "password": "Test@1111"
+    },
+    {
+        "email": "dwilliams@example.com",
+        "password": "Test@1111"
+    },
+    {
+        "email": "ysmith@example.org",
+        "password": "Test@1111"
     }
 ]

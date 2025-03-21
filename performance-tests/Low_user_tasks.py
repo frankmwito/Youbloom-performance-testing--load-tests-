@@ -94,6 +94,5 @@ class MyTaskSet(SequentialTaskSet):
         print("Stopping the tasks")
 
 class UserBehaviour(HttpUser):
-    host = "https://youbloom.com"  # Set the host URL here
     wait_time = between(0.5, 4)
     tasks = [MyTaskSet ]#, MyTaskSet1]

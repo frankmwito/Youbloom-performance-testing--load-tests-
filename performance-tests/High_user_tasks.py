@@ -100,7 +100,7 @@ class MyTaskset2(TaskSet):
             logging.error(f"Login request failed: {e}")
 
     @task(2)  # Task to switch to MyTaskSet3 (Forgot Password)
-    def enter_mested_forgot_password(self):
+    def enter_nested_forgot_password(self):
         logging.info("Switching to MyTaskSet3 (Forgot Password TaskSet)")
         self.schedule_task(MyTaskSet3)
 
@@ -165,6 +165,5 @@ class MyTaskSet3(TaskSet):
 
 
 class UserBehaviour(HttpUser):
-    host = "https://youbloom.com"  # Set the host URL here
     wait_time = constant(4)
     tasks = [MyTaskSet1]  # Use a list for tasks

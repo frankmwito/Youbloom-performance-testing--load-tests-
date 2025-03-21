@@ -1,1 +1,7 @@
 Method,Name,Error,Occurrences
+GET,artist_region,HTTPError('500 Server Error: Internal Server Error for url: artist_region'),5
+GET,My Shows,HTTPError('500 Server Error: Internal Server Error for url: My Shows'),21
+POST,youbloom connect login,HTTPError('419 Client Error: <none> for url: youbloom connect login'),1
+GET,Show setup,HTTPError('500 Server Error: Internal Server Error for url: Show setup'),23
+POST,youbloom connect login,HTTPError('419 Client Error:  for url: youbloom connect login'),10
+GET,show checkin,HTTPError('500 Server Error: Internal Server Error for url: show checkin'),20
